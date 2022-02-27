@@ -1,17 +1,3 @@
-# StudentID:	p2136798
-# Name:	        Gan Hanyong
-# Class:		DISM/FT/1B/02   
-# Assessment:	CA1
-# 
-# Script name:	cipher.py
-# 
-# Purpose:  	Encrypt passwords using simple caesar cipher
-#
-# Usage syntax:	F5
-# 
-# Python ver:	Python 3.9.7
-
-
 DEFINE FUNCTION encrypt(string: str):
 
 
