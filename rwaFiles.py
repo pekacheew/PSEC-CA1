@@ -1,26 +1,3 @@
-# StudentID:	p2136798
-# Name:	        Gan Hanyong
-# Class:		DISM/FT/1B/02   
-# Assessment:	CA1
-# 
-# Script name:	rwaFiles.py
-# 
-# Purpose:  	Reusable read, write, append Functions
-#
-# Usage syntax:	F5
-# 
-# Input file:	Specify full path, 'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\userid_pswd.csv'
-#                                  'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\quiz_settings.csv'
-#                                  'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\question_pool.csv'
-#                                  'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\quiz_results.csv'
-# 
-# Output file:	Specify full path, 'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\userid_pswd.csv'
-#                                  'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\quiz_settings.csv'
-#                                  'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\question_pool.csv'
-#                                  'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\quiz_results.csv'
-# 
-# Python ver:	Python 3.9.7
-
 import random
 ########################## userid_pswd.csv #######################
 # Remove spacing in list function
