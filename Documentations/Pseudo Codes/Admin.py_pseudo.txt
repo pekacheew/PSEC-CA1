@@ -1,0 +1,1064 @@
+# StudentID:	p2136798
+# Name:	        Gan Hanyong
+# Class:	DISM/FT/1B/02   
+# Assessment:	CA1
+#
+# Script name:	Admin.py
+# 
+# Purpose:  	Creation, editing, and deletion of users, questions, and quiz settings. To generate results report too.
+#
+# Usage syntax:	F5
+#
+# Input file:	Specify full path, 'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\userid_pswd.csv'
+#                                  'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\quiz_settings.csv'
+#                                  'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\question_pool.csv'
+#                                  'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\quiz_results.csv'
+# 
+# Output file:	Specify full path, 'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\userid_pswd.csv'
+#                                  'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\quiz_settings.csv'
+#                                  'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\question_pool.csv'
+#                                  'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\quiz_results.csv'
+# 
+# Python ver:	Python 3.9.7
+
+
+from verifiers IMPORT *
+
+from cipher IMPORT *
+
+from rwaFiles IMPORT *
+
+SET passCounter TO 0
+
+SET idCounter TO 0
+
+SET userID TO ''
+
+############################################ Start of Register User ############################################
+
+# Register User Function - userid_pswd.csv
+
+DEFINE FUNCTION registerUser():
+
+    OUTPUT("\n\ta) Register User")
+
+    OUTPUT("\tb) Edit User")
+
+    OUTPUT("\tc) Delete User")
+
+    OUTPUT("\td) Retrieve User List")
+
+    OUTPUT("\te) back to previous")
+
+
+
+    SET adminInput TO INPUT("\n\tSelect option: ")
+
+    IF adminInput EQUALS "a":                                                           # a) Register User
+
+        SET tOrF TO True
+
+        
+
+        WHILE tOrF EQUALS True:
+
+            SET userID TO INPUT("\nPlease enter the new user's ID: ")                    # ask FOR new user's userID
+
+            SET verifyUserID TO checkComma(userID)
+
+            IF verifyUserID EQUALS True:
+
+                OUTPUT("Please do not enter a comma IN your ID.")
+
+                SET tOrF TO True
+
+            ELSE:
+
+                SET tOrF TO regUsrIDone(verifyUserID)
+
+
+
+        SET tOrF TO True
+
+        WHILE tOrF EQUALS True:
+
+            SET userPswd TO INPUT("\nPlease enter the new user's Password: ")            # ask FOR new user's passwd
+
+            SET tOrF TO passcheck(userPswd)                                              # check IF the passwd is secure
+
+        
+
+        SET encryptedPass TO encrypt(userPswd)                                           # encrypt passwd with Caesar Cipher
+
+
+
+        SET tOrF TO True
+
+        WHILE tOrF EQUALS True:
+
+            SET aOrU TO INPUT("Enter (a) FOR admin account and (u) FOR user account: ")  # ask IF new account is admin or user account
+
+            SET tOrF TO admOrUsr(aOrU)
+
+        
+
+        IF aOrU EQUALS 'a':                                                             # set total Attempts 
+
+            SET attempts TO 999
+
+        ELSE:
+
+            SET attempts TO qzSettings(3)
+
+        
+
+        SET tOrF TO True
+
+        WHILE tOrF EQUALS True:
+
+            SET scrtQn TO INPUT("\nPlease enter a secret recovery question.\n>>> ")              # ask FOR secret question
+
+            SET verifyScrtQn TO checkComma(scrtQn)
+
+            IF verifyScrtQn EQUALS True:
+
+                OUTPUT("Please do not enter a comma IN your question.")
+
+                SET tOrF TO True
+
+            ELSE:
+
+                SET tOrF TO False
+
+
+
+        SET tOrF TO True
+
+        WHILE tOrF EQUALS True:
+
+            SET scrtAns TO INPUT("\nPlease enter your secret question's answer.\n>>> ")          # ask FOR secret question's answer
+
+            SET verifyScrtAns TO checkComma(scrtAns)
+
+            IF verifyScrtAns EQUALS True:
+
+                OUTPUT("Please do not enter a comma IN your answer.")
+
+                SET tOrF TO True
+
+            ELSE:
+
+                SET tOrF TO False
+
+
+
+        # concatenate userID + userPswd + aOrU + Attempts + secret question + secret question's answer'
+
+        SET writeIntoFile TO (str(userID)+','+str(encryptedPass)+','+str(aOrU)+','+str(attempts) +',' + str(scrtQn)+','+str(scrtAns))
+
+
+
+        newUsr(writeIntoFile)                                                       # insert userID and passwd into userid_pswd.csv
+
+        OUTPUT("\nRegistration Successful!\n")                                       # OUTPUT successful
+
+        rmvSpaceID()
+
+        registerUser()                                                              # back to menu
+
+        
+
+    ELSEIF adminInput EQUALS "b":                                                         # b) Edit User Passwd
+
+        SET tOrF TO True
+
+        SET passchecker TO True
+
+        SET idCounter TO 0
+
+
+
+        WHILE tOrF EQUALS True:
+
+            SET userID TO INPUT("\nPlease enter the existing user's ID: ")               # ask FOR existing user's userID
+
+            SET tOrF TO regUsrIDtwo(userID,'a') and regUsrIDtwo(userID,'u')
+
+            IF tOrF EQUALS False:
+
+                OUTPUT("User exists.")
+
+            idCounter += 1
+
+            IF idCounter EQUALS 3 and tOrF EQUALS True:
+
+                OUTPUT("You have tried too many times, RETURNing you to previous menu.\n")
+
+                startAdmin()
+
+        
+
+        SET tOrF TO True
+
+        SET passCounter TO 0
+
+        
+
+        WHILE tOrF EQUALS True:
+
+            SET userPswd TO INPUT("\nPlease enter the user's Password: ")                # ask FOR the user's passwd
+
+            SET encryptedPass TO encrypt(userPswd)
+
+            SET tOrF TO usrPswd(userID,encryptedPass)                                    # check IF the passwd is correct
+
+
+
+            passCounter += 1
+
+            IF passCounter EQUALS 3 and tOrF EQUALS True:                                   # limit password tries
+
+                OUTPUT("You have tried too many times.")
+
+                SET tOrF TO False
+
+                IF tOrF EQUALS False:
+
+                    registerUser()                                                  # back to menu
+
+        
+
+        WHILE passchecker EQUALS True :
+
+            SET newUsrPswd TO INPUT("\nPlease enter the new password: ")                 # ask FOR user's new passwd
+
+            SET passchecker TO passcheck(newUsrPswd)                                     # check IF the passwd is secure
+
+        
+
+        SET encryptedPass TO encrypt(newUsrPswd)
+
+        editPswd(userID,encryptedPass)                                              # insert passwd into correct line IN userid_pswd.csv
+
+        rmvSpaceID()
+
+        OUTPUT("Password edited successfully.")                                      # OUTPUT successful
+
+        registerUser()                                                              # back to menu
+
+
+
+    ELSEIF adminInput EQUALS "c":                                                         # c) Delete User
+
+        SET tOrF TO True
+
+        SET idCounter TO 0
+
+
+
+        WHILE tOrF EQUALS True:
+
+            SET userID TO INPUT("\nPlease enter the existing user's ID: ")               # ask FOR user's userID to delete
+
+            SET tOrF TO regUsrIDtwo(userID,'a') and regUsrIDtwo(userID,'u') 
+
+            idCounter += 1
+
+            IF idCounter EQUALS 3 and tOrF EQUALS True:
+
+                OUTPUT("You have tried too many times, RETURNing you to previous menu.\n")
+
+                startAdmin()
+
+
+
+        IF dblConfirm() EQUALS True:                                                    # ask FOR user's INPUT to double confirm deletion, IF not, back to menu
+
+            PASS
+
+        ELSE:
+
+            registerUser()
+
+        
+
+        removeUsr(userID)                                                           # delete respective line IN userid_pswd.csv
+
+        rmvSpaceID()
+
+        OUTPUT("User deleted successfully.")                                         # OUTPUT successful
+
+        registerUser()                                                              # back to menu
+
+
+
+    ELSEIF adminInput EQUALS "d":                                                         # d) Retrieve User List
+
+        usrList()                                                                   # OUTPUT list of users from userid_pswd.csv
+
+        registerUser()                                                              # back to menu
+
+
+
+    ELSEIF adminInput EQUALS "e":                                                         # e) back to previous
+
+        startAdmin()
+
+
+
+    ELSE:                   
+
+        OUTPUT("You have not entered a valid option")                                # invalid INPUT
+
+        registerUser()
+
+
+
+############################################ Start of Quiz Settings ############################################
+
+# Setup Quiz Function - quiz_settings.csv
+
+DEFINE FUNCTION setupQuiz(): #set quiz timer, 
+
+    OUTPUT("\n\ta) Set Quiz Timer")
+
+    OUTPUT("\tb) Set Number of Questions Tested")
+
+    OUTPUT("\tc) Set Total Attempts FOR Quiz")
+
+    OUTPUT("\td) back to previous")
+
+
+
+    SET adminInput TO INPUT("\n\tSelect option: ")
+
+    IF adminInput EQUALS "a":                                                           # a) Set Quiz Timer
+
+        SET tOrF TO True
+
+        SET selection TO 'Quiz Timer'
+
+        
+
+        WHILE tOrF EQUALS True:
+
+            SET qzTimer TO INPUT("Please enter the new quiz timer: ")                    # ask FOR user's INPUT FOR quiz timer
+
+            IF qzTimer.isnumeric():
+
+                SET tOrF TO intCheck(float(qzTimer))
+
+            ELSE:
+
+                OUTPUT("Please enter a valid integer.")                              # invalid INPUT
+
+                SET tOrF TO True
+
+        
+
+        quizTimer(qzTimer,selection)                                                # update quiz_settings.csv on quiz timer
+
+        OUTPUT("Quiz timer updated successfully.")                                   # OUTPUT successful
+
+        setupQuiz()                                                                 # back to menu
+
+
+
+    ELSEIF adminInput EQUALS "b":                                                         # b) Set Number of Questions Tested
+
+        SET tOrF TO True
+
+        SET selection TO 'No. of Questions'
+
+
+
+        WHILE tOrF EQUALS True:
+
+            SET qzNum TO INPUT("Please enter the number of questions to be tested: ")    # ask FOR user's INPUT FOR number of questions to be tested
+
+            IF qzNum.isnumeric():
+
+                SET tOrF TO intCheck(float(qzNum))
+
+            ELSE:
+
+                OUTPUT("Please enter a valid integer.")                              # invalid INPUT
+
+                SET tOrF TO True
+
+        
+
+        quizTimer(qzNum,selection)                                                  # update quiz_settings.csv on number of questions to be tested
+
+        OUTPUT("Number of questions updated successfully.")                          # OUTPUT successful
+
+        setupQuiz()                                                                 # back to menu
+
+
+
+    ELSEIF adminInput EQUALS "c":                                                         # c) Set Total Marks FOR Quiz
+
+        SET tOrF TO True
+
+        SET selection TO 'Attempts'
+
+        
+
+        WHILE tOrF EQUALS True:
+
+            SET qzAtmpt TO INPUT("Please enter the total attempts to be set: ")          # ask FOR user's INPUT FOR total attempts set FOR the quiz
+
+            IF qzAtmpt.isnumeric():
+
+                SET tOrF TO intCheck(float(qzAtmpt))
+
+            ELSE:
+
+                OUTPUT("Please enter a valid integer.")                              # invalid INPUT
+
+                SET tOrF TO True
+
+        
+
+        quizTimer(qzAtmpt,selection)                                                # update quiz_settings.csv on total marks of entire quiz
+
+        OUTPUT("Number of attempts updated successfully.")                           # OUTPUT successful
+
+        setupQuiz()                                                                 # back to menu
+
+        
+
+    ELSEIF adminInput EQUALS "d":                                                         # d) back to previous
+
+        startAdmin()
+
+
+
+    ELSE:                   
+
+        OUTPUT("You have not entered a valid option")                                # invalid INPUT
+
+        setupQuiz()
+
+
+
+############################################ Start of Define Options ############################################
+
+# Define Options Functions - question_pool.csv
+
+DEFINE FUNCTION defineOptions():
+
+    OUTPUT("\n\ta) Add Question")
+
+    OUTPUT("\tb) Edit Question")
+
+    OUTPUT("\tc) Delete Question")
+
+    OUTPUT("\td) Retrieve Question List")
+
+    OUTPUT("\te) back to previous")
+
+
+
+    SET adminInput TO INPUT("\n\tSelect option: ")
+
+    IF adminInput EQUALS "a":                                                           # a) Add Question
+
+        
+
+        SET tOrF TO True
+
+        WHILE tOrF EQUALS True:
+
+            SET newQn TO INPUT("Enter the new question: ")                               # ask FOR user's INPUT on new question
+
+            SET checkQn TO regQnone(newQn)                                               # check IF question already exist, IF exist, OUTPUT already exist
+
+            IF checkQn EQUALS False:                                                    # IF question doesn't exist, check FOR comma
+
+                SET verifyNewQn TO checkComma(newQn)
+
+                IF verifyNewQn EQUALS True:                                             # IF got comma, OUTPUT error message
+
+                    OUTPUT("Please do not enter a comma IN your question.")
+
+                    SET tOrF TO True                                                         
+
+                ELSE:                                                               # IF don't have comma, continue on to 
+
+                    SET tOrF TO False
+
+            ELSE:
+
+                SET tOrF TO True
+
+
+
+        # ask FOR question options
+
+        SET tOrF TO True
+
+        WHILE tOrF:
+
+            SET newQnA TO INPUT("Enter the first option a) ")                            # ask FOR question's first option
+
+            SET verifyNewQnA TO checkComma(newQnA)
+
+            IF verifyNewQnA EQUALS True:                                                # IF got comma, OUTPUT error message
+
+                OUTPUT("Please do not enter a comma IN your question.")
+
+                SET tOrF TO True                                                         
+
+            ELSE:                                                                   # IF don't have comma, continue on to 
+
+                SET tOrF TO False
+
+
+
+        SET tOrF TO True
+
+        WHILE tOrF:
+
+            SET newQnB TO INPUT("Enter the second option b) ")                           # ask FOR question's first option
+
+            SET verifyNewQnB TO checkComma(newQnB)
+
+            IF verifyNewQnB EQUALS True:                                                # IF got comma, OUTPUT error message
+
+                OUTPUT("Please do not enter a comma IN your question.")
+
+                SET tOrF TO True                                                         
+
+            ELSE:                                                                   # IF don't have comma, continue on to 
+
+                SET tOrF TO False
+
+                
+
+        SET tOrF TO True
+
+        WHILE tOrF:
+
+            SET newQnC TO INPUT("Enter the third option c) ")                            # ask FOR question's first option
+
+            SET verifyNewQnC TO checkComma(newQnC)
+
+            IF verifyNewQnC EQUALS True:                                                # IF got comma, OUTPUT error message
+
+                OUTPUT("Please do not enter a comma IN your question.")
+
+                SET tOrF TO True                                                         
+
+            ELSE:                                                                   # IF don't have comma, continue on to 
+
+                SET tOrF TO False
+
+
+
+        SET tOrF TO True
+
+        WHILE tOrF:
+
+            SET newQnD TO INPUT("Enter the fourth option d) ")                           # ask FOR question's first option
+
+            SET verifyNewQnD TO checkComma(newQnD)
+
+            IF verifyNewQnD EQUALS True:                                                # IF got comma, OUTPUT error message
+
+                OUTPUT("Please do not enter a comma IN your question.")
+
+                SET tOrF TO True                                                         
+
+            ELSE:                                                                   # IF don't have comma, continue on to 
+
+                SET tOrF TO False
+
+
+
+        SET newQnAns TO qnAnsOption()                                                    # ask FOR question answer
+
+
+
+        SET questionFormat TO (f'{newQn},{newQnA},{newQnB},{newQnC},{newQnD},{newQnAns}')# concatenate question answers and options together
+
+        addQuestion(questionFormat)                                                 # write question,a,b,c,d,ans into question_pool.csv
+
+        OUTPUT("Question added successfully.")                                       # OUTPUT successful
+
+        defineOptions()                                                             # back to menu
+
+
+
+    ELSEIF adminInput EQUALS "b":                                                         # b) Edit Question
+
+        SET tOrF TO True
+
+        SET options TO True
+
+        
+
+        WHILE tOrF EQUALS True:
+
+            SET qnToEdit TO INPUT("\nPlease enter the question to edit: ")               # ask FOR user's INPUT on question to edit
+
+            SET tOrF TO regQntwo(qnToEdit)                                               # check IF question exists, IF not, OUTPUT does not exist
+
+        
+
+        WHILE options EQUALS True:
+
+            SET qnOpToEdit TO INPUT("What do you want to edit (qn|a|b|c|d|ans)? ")       # ask FOR user's INPUT on whether to change question,a,b,c,d, or ans
+
+
+
+            IF qnOpToEdit EQUALS 'qn':
+
+                SET tOrF TO True
+
+                WHILE tOrF:
+
+                    SET qnOpChg TO INPUT("What do you want to change it to? ")           # ask user FOR change   
+
+                    SET verifyQnOpChg TO checkComma(qnOpChg)
+
+                    IF verifyQnOpChg EQUALS True:
+
+                        OUTPUT("Please do not enter a comma IN your question.")
+
+                        SET tOrF TO True
+
+                    ELSE:
+
+                        SET tOrF TO False
+
+
+
+                editQn(qnToEdit,qnOpChg,0)                                          # write changes into question_pool.csv
+
+                SET options TO False
+
+                
+
+            ELSEIF qnOpToEdit EQUALS 'a':
+
+                SET tOrF TO True
+
+                WHILE tOrF:
+
+                    SET qnOpChg TO INPUT("What do you want to change it to? ")           # ask user FOR change   
+
+                    SET verifyQnOpChg TO checkComma(qnOpChg)
+
+                    IF verifyQnOpChg EQUALS True:
+
+                        OUTPUT("Please do not enter a comma IN your option.")        # IF INPUT has comma, prompt FOR change again
+
+                        SET tOrF TO True
+
+                    ELSE:
+
+                        SET tOrF TO False                                                
+
+                editQn(qnToEdit,qnOpChg,1)                                          # write changes into question_pool.csv
+
+                SET options TO False
+
+
+
+            ELSEIF qnOpToEdit EQUALS 'b':
+
+                SET tOrF TO True
+
+                WHILE tOrF:
+
+                    SET qnOpChg TO INPUT("What do you want to change it to? ")           # ask user FOR change   
+
+                    SET verifyQnOpChg TO checkComma(qnOpChg)
+
+                    IF verifyQnOpChg EQUALS True:
+
+                        OUTPUT("Please do not enter a comma IN your option.")        # IF INPUT has comma, prompt FOR change again
+
+                        SET tOrF TO True
+
+                    ELSE:
+
+                        SET tOrF TO False
+
+                editQn(qnToEdit,qnOpChg,2)                                          # write changes into question_pool.csv
+
+                SET options TO False
+
+
+
+            ELSEIF qnOpToEdit EQUALS 'c':
+
+                SET tOrF TO True
+
+                WHILE tOrF:
+
+                    SET qnOpChg TO INPUT("What do you want to change it to? ")           # ask user FOR change   
+
+                    SET verifyQnOpChg TO checkComma(qnOpChg)
+
+                    IF verifyQnOpChg EQUALS True:
+
+                        OUTPUT("Please do not enter a comma IN your option.")        # IF INPUT has comma, prompt FOR change again
+
+                        SET tOrF TO True
+
+                    ELSE:
+
+                        SET tOrF TO False
+
+                editQn(qnToEdit,qnOpChg,3)                                          # write changes into question_pool.csv
+
+                SET options TO False
+
+                
+
+            ELSEIF qnOpToEdit EQUALS 'd':
+
+                SET tOrF TO True
+
+                WHILE tOrF:
+
+                    SET qnOpChg TO INPUT("What do you want to change it to? ")           # ask user FOR change   
+
+                    SET verifyQnOpChg TO checkComma(qnOpChg)
+
+                    IF verifyQnOpChg EQUALS True:
+
+                        OUTPUT("Please do not enter a comma IN your option.")        # IF INPUT has comma, prompt FOR change again
+
+                        SET tOrF TO True
+
+                    ELSE:
+
+                        SET tOrF TO False
+
+                editQn(qnToEdit,qnOpChg,4)                                          # write changes into question_pool.csv
+
+                SET options TO False
+
+
+
+            ELSEIF qnOpToEdit EQUALS 'ans':                                               # ask user FOR change
+
+                SET qnOpChg TO abcdOption()                                              # verify the INPUT is (a) to (d) only
+
+                editQn(qnToEdit,qnOpChg,5)                                          # write changes into question_pool.csv
+
+                SET options TO False
+
+            ELSE:
+
+                OUTPUT("Please INPUT a valid options.")                              # invalid INPUT
+
+                SET options TO True
+
+        
+
+        OUTPUT("Successful!")                                                        # OUTPUT successful
+
+        rmvSpaceQn()
+
+        defineOptions()                                                             # back to menu
+
+    ELSEIF adminInput EQUALS "c":                                                         # c) Delete Question
+
+        SET tOrF TO True
+
+
+
+        WHILE tOrF EQUALS True:
+
+            # ask FOR user's INPUT on question to delete
+
+            SET qnToDel TO INPUT("\nPlease enter the question to delete: ")
+
+            SET tOrF TO regQntwo(qnToDel)                                                # check IF question exists, IF not, OUTPUT does not exist and ask again
+
+        
+
+        IF dblConfirm() EQUALS True:                                                    # ask FOR user's INPUT to double confirm deletion, IF not, back to menu
+
+            PASS
+
+        ELSE:
+
+            defineOptions()
+
+        
+
+        removeQn(qnToDel)                                                           # delete selected question IN question_pool.csv 
+
+        rmvSpaceQn()
+
+        OUTPUT("Question deleted successfully.")                                     # OUTPUT successful
+
+        defineOptions()                                                             # back to menu
+
+
+
+    ELSEIF adminInput EQUALS "d":                                                         # d) Retrieve Question List
+
+        qnList()                                                                    # OUTPUT list of  questions only from question_pool.csv
+
+        defineOptions()                                                             # back to menu
+
+
+
+    ELSEIF adminInput EQUALS "e":                                                         # e) back to previous
+
+        startAdmin()
+
+
+
+    ELSE:                                                                           # invalid INPUT
+
+        OUTPUT("You have not entered a valid option") 
+
+        defineOptions()
+
+
+
+
+
+############################################ Plus Minus Attempts ############################################
+
+DEFINE FUNCTION plusMinusA():
+
+    global userID
+
+    OUTPUT("\n\ta) Reset All Attempts")
+
+    OUTPUT("\tb) Plus 1 Attempt to all users")
+
+    OUTPUT("\tc) Minus 1 Attempt to all users")
+
+    OUTPUT("\td) Set to unlimited attempts")
+
+    OUTPUT("\te) back to previous")
+
+
+
+    #Filter Input
+
+    SET adminInput TO INPUT("\n\tSelect option: ")
+
+    IF adminInput EQUALS "a":   # a) Reset All Attempts
+
+        resetAttempt()      
+
+        OUTPUT("Successfully reset all attempts to users.")
+
+        plusMinusA()
+
+
+
+    ELSEIF adminInput EQUALS "b": # b) Plus 1 Attempt to all users
+
+        plusAttempt()
+
+        OUTPUT("Successfully add 1 attempt to users.")
+
+        plusMinusA()
+
+        
+
+    ELSEIF adminInput EQUALS "c": # c) Minus 1 Attempt to all users
+
+        minusAttempt()
+
+        OUTPUT("Successfully minus 1 attempt to users.")
+
+        plusMinusA()
+
+
+
+    ELSEIF adminInput EQUALS "d": # d) Set to unlimited attempts
+
+        unlimitedAttempt()
+
+        OUTPUT("Successfully set attempts to unlimited.")
+
+        plusMinusA()
+
+        
+
+    
+
+    ELSEIF adminInput EQUALS "e": # e) back to previous
+
+        startAdmin()
+
+    ELSE:                   # invalid INPUT
+
+        OUTPUT("You have not entered a valid option.") 
+
+        plusMinusA()
+
+
+
+############################################ Start of Generating Report ############################################
+
+# Generate Report Function - quiz_results.csv
+
+DEFINE FUNCTION genReport():
+
+    resultList() # get quiz results from quiz_results.csv
+
+    startAdmin() # RETURN back to menu
+
+
+
+############################################ Start of Admin Program ##########################################
+
+DEFINE FUNCTION startAdmin():
+
+    
+
+    #Provide Options
+
+    OUTPUT("\na) User Functions")
+
+    OUTPUT("b) Define various options")
+
+    OUTPUT("c) Setup the pool of quiz questions")
+
+    OUTPUT("d) Plus Minus Attempts")
+
+    OUTPUT("e) Generate report") 
+
+    OUTPUT("f) Exit")
+
+
+
+    #Filter Input
+
+    SET adminInput TO INPUT("\nSelect option: ")
+
+    IF adminInput EQUALS "a":   # a) Register User
+
+        registerUser()
+
+        
+
+    ELSEIF adminInput EQUALS "b": # b) Define various options
+
+        
+
+        setupQuiz()
+
+    ELSEIF adminInput EQUALS "c": # c) Setup the pool of quiz questions
+
+        defineOptions()
+
+        
+
+    ELSEIF adminInput EQUALS "d": # d) Plus Minus Attempts
+
+        plusMinusA()
+
+
+
+    ELSEIF adminInput EQUALS "e": # e) Generate report
+
+        genReport()
+
+        
+
+    
+
+    ELSEIF adminInput EQUALS "f": # f) Exit
+
+        exit()
+
+    ELSE:                   # invalid INPUT
+
+        OUTPUT("You have not entered a valid option.") 
+
+        startAdmin()
+
+
+
+############################################ Start of Admin Login ##########################################
+
+
+
+DEFINE FUNCTION adminLogin():
+
+    global userID
+
+    global idCounter
+
+    global passCounter
+
+    SET idCount TO True
+
+    SET tOrF TO True
+
+
+
+    OUTPUT("<<<Welcome to Admin Login Page>>> ")                                      # OUTPUT welcome message
+
+    WHILE tOrF EQUALS True and idCount EQUALS True:
+
+        SET userID TO INPUT("\nPlease enter the admin user's ID: ")                      # check IF userID exists, IF not, ask again
+
+        SET tOrF TO adminORuser(userID)
+
+        IF tOrF EQUALS True:
+
+            OUTPUT("Invalid admin user")
+
+        idCounter += 1
+
+        IF idCounter EQUALS 3 and tOrF EQUALS True:                                         # limit id tries
+
+            OUTPUT("You have tried too many times.")
+
+            exit()
+
+
+
+    SET tOrF TO True
+
+    SET passCount TO True
+
+    WHILE tOrF EQUALS True and passCount EQUALS True:        
+
+        SET userPswd TO INPUT("\nPlease enter the admin user's Password: ")              # ask FOR password 
+
+        # encrypt with Caesar cipher and check it against userid_pswd.csv, IF it's not a match, ask to re-enter
+
+        SET encryptedPass TO encrypt(userPswd)
+
+        SET tOrF TO usrPswd(userID,encryptedPass)
+
+
+
+        passCounter += 1
+
+        IF passCounter EQUALS 3 and tOrF EQUALS True:                                       # limit password tries
+
+            OUTPUT("You have tried too many times.")
+
+            SET passCount TO False
+
+            exit()
+
+            
+
+    IF tOrF EQUALS False:
+
+        startAdmin()                                                                # IF admin login successful, move onto options
+
+
+
+adminLogin()
+
+
+

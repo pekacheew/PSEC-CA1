@@ -1,0 +1,488 @@
+# StudentID:	p2136798
+# Name:	        Gan Hanyong
+# Class:	DISM/FT/1B/02   
+# Assessment:	CA1
+# 
+# Script name:	verifiers.py
+# 
+# Purpose:  	To verify all INPUTs from Admin.py and User.py
+#
+# Usage syntax:	F5
+# 
+# Input file:	Specify full path, 'D:\SP School\Y1 SEM2\PSEC\CA1(submit this)\Admin.py'
+#                                  'D:\SP School\Y1 SEM2\PSEC\CA1(submit this)\User.py'
+# 
+# Output file:	Specify full path, 'D:\SP School\Y1 SEM2\PSEC\CA1(submit this)\Admin.py'
+#                                  'D:\SP School\Y1 SEM2\PSEC\CA1(submit this)\User.py'
+# 
+# Python ver:	Python 3.9.7
+#
+
+
+from rwaFiles IMPORT *
+
+DEFINE FUNCTION password_validator(passwd):
+
+      
+
+    SpecialSym =['$', '@', '#', '%', '!']                                           # valid special characters
+
+    SET val TO True
+
+      
+
+    IF len(passwd) < 4:                                                             # IF password length is lesser than 4, invalid password
+
+        OUTPUT('Password length should be at least 4.')
+
+        SET val TO False
+
+          
+
+    IF len(passwd) > 20:
+
+        OUTPUT('Passowrd length should be not be greater than 20.')                  # IF password length is longer than 20, invalid password
+
+        SET val TO False
+
+          
+
+    IF not any(char.isdigit() FOR char IN passwd):                                  # IF password do not have numerals, invalid password
+
+        OUTPUT('Password should have at least one numeral.')
+
+        SET val TO False
+
+          
+
+    IF not any(char.isupper() FOR char IN passwd):                                  # IF password do not have uppercase, invalid password
+
+        OUTPUT('Password should have at least one uppercase letter.')
+
+        SET val TO False
+
+          
+
+    IF not any(char.islower() FOR char IN passwd):                                  # IF password do not have lowercase, invalid password
+
+        OUTPUT('Password should have at least one lowercase letter.')
+
+        SET val TO False
+
+          
+
+    IF not any(char IN SpecialSym FOR char IN passwd):
+
+        OUTPUT('Password should have at least one of the symbols !,$,@,#,%.')
+
+        SET val TO False
+
+        
+
+    IF any(',' IN char FOR char IN passwd):                                         # IF password has commas, invalid password                                   
+
+        OUTPUT("Password should not have commas.")
+
+        SET val TO False
+
+
+
+    IF val:
+
+        RETURN val
+
+  
+
+# Main password checker function
+
+DEFINE FUNCTION passcheck(passwd):
+
+      
+
+    IF (password_validator(passwd)):                                               
+
+        OUTPUT("Password is valid.")
+
+        RETURN False
+
+    ELSE:
+
+        OUTPUT("Invalid Password !!")
+
+        RETURN True
+
+
+
+# check integer function
+
+DEFINE FUNCTION intCheck(intput):                                                               
+
+        IF intput <= 60 and intput > 0:                                             # integer only valid IF it is between the value of 0 - 60
+
+            OUTPUT(f"{intput} is valid .")
+
+            RETURN False
+
+
+
+        ELSEIF intput > 60:                                                           # IF integer INPUT is more than 60, invalid INPUT
+
+            OUTPUT("Please enter an integer of no more than 60.")
+
+            RETURN True
+
+
+
+        ELSEIF intput <= 0:                                                           # IF integer INPUT is less than 0, invalid INPUT
+
+            OUTPUT("Please enter an integer of no less than or equal to 0.")
+
+            RETURN True
+
+
+
+        ELSE:                                                                       # IF integer INPUT is not a number, invalid INPUT
+
+            OUTPUT("Please enter a valid integer.")
+
+            RETURN True
+
+    
+
+# double confirm function
+
+DEFINE FUNCTION dblConfirm():
+
+    SET question TO INPUT("\nDouble confirm to delete (y|n)? ")                          # prompt FOR INPUT (y|n)
+
+    IF question EQUALS "y":                                                             # IF INPUT is 'y', RETURN True
+
+        OUTPUT()
+
+        RETURN True
+
+    ELSEIF question EQUALS "n":                                                           # IF INPUT is 'n', RETURN False
+
+        OUTPUT()
+
+        RETURN False
+
+    ELSE:                                                                           # IF INPUT is neither 'y' nor 'n', prompt FOR INPUT again
+
+        OUTPUT("You have not entered a valid option.")
+
+        dblConfirm()
+
+
+
+# (y|n) function
+
+DEFINE FUNCTION yOrN(userINPUT):
+
+    IF userINPUT EQUALS "y":                                                            # IF INPUT is 'y', RETURN False
+
+        RETURN False    
+
+    ELSEIF userINPUT EQUALS "n":                                                          # IF INPUT is 'n', RETURN True
+
+        PASS
+
+        RETURN False
+
+    ELSE:                                                                           # IF INPUT is neither 'y' nor 'n', prompt FOR INPUT again
+
+        OUTPUT("You have not entered a valid option.")
+
+        RETURN True
+
+
+
+# (a|b|c|d) function
+
+DEFINE FUNCTION abcdOption():
+
+    SET tOrF TO True
+
+    
+
+    WHILE tOrF EQUALS True:
+
+        SET abcd TO INPUT("What do you want to it change to (a|b|c|d)? ")                # prompt FOR user INPUT (a|b|c|d)
+
+        SET if abcd EQUALS "a":                                                             # IF INPUT TO 'a', RETURN 'a'
+
+            OUTPUT("\nSuccessful")
+
+            RETURN 'a'
+
+            
+
+        SET elif abcd EQUALS "b":                                                           # IF INPUT TO 'b', RETURN 'b'
+
+            OUTPUT("\nSuccessful")
+
+            RETURN 'b'
+
+               
+
+        SET elif abcd EQUALS "c":                                                           # IF INPUT TO 'c', RETURN 'c'
+
+            OUTPUT("\nSuccessful")
+
+            RETURN 'c'
+
+               
+
+        SET elif abcd EQUALS "d":                                                           # IF INPUT TO 'd', RETURN 'd'
+
+            OUTPUT("\nSuccessful")
+
+            RETURN 'd'
+
+                
+
+        ELSE:                                                                       # IF INPUT is neither 'a' or 'b' or 'c' or 'd', prompt FOR INPUT again 
+
+            OUTPUT("Please enter a valid letter.")
+
+            SET tOrF TO True
+
+
+
+# quiz options
+
+DEFINE FUNCTION quizOption(i):
+
+    SET tOrF TO True
+
+    WHILE tOrF EQUALS True:
+
+
+
+        IF i EQUALS 0:
+
+            # prompts FOR INPUT (a|b|c|d|N) and RETURNs INPUT value. If not valid INPUT, prompt again.
+
+            SET qnUserInput TO INPUT("\tEnter (a) to (d) FOR answer, N FOR next question:\n>>> ")    
+
+            IF qnUserInput EQUALS "a":
+
+                RETURN 'a'
+
+            ELSEIF qnUserInput EQUALS "b":
+
+                RETURN 'b'
+
+            ELSEIF qnUserInput EQUALS "c":
+
+                RETURN 'c'
+
+            ELSEIF qnUserInput EQUALS "d":
+
+                RETURN 'd'
+
+            ELSEIF qnUserInput EQUALS "N":
+
+                RETURN 'N'
+
+            ELSE:
+
+                OUTPUT("Please enter a valid option.")
+
+                SET tOrF TO True
+
+
+
+        ELSEIF i EQUALS qzSettings(2)-1:
+
+            # prompts FOR INPUT (a|b|c|d|P) and RETURNs INPUT value. If not valid INPUT, prompt again.
+
+            SET qnUserInput TO INPUT("\tEnter (a) to (d) FOR answer, P FOR previous question:\n>>> ")
+
+            IF qnUserInput EQUALS "a":
+
+                RETURN 'a'
+
+            ELSEIF qnUserInput EQUALS "b":
+
+                RETURN 'b'
+
+            ELSEIF qnUserInput EQUALS "c":
+
+                RETURN 'c'
+
+            ELSEIF qnUserInput EQUALS "d":
+
+                RETURN 'd'
+
+            ELSEIF qnUserInput EQUALS "P":
+
+                RETURN 'P'
+
+            ELSE:
+
+                OUTPUT("Please enter a valid option.")
+
+                SET tOrF TO True
+
+            
+
+
+
+        ELSE:
+
+            # prompts FOR INPUT (a|b|c|d|N|P) and RETURNs INPUT value. If not valid INPUT, prompt again.
+
+            SET qnUserInput TO INPUT("\tEnter (a) to (d) FOR answer, P FOR previous question, N FOR next question:\n>>> ")
+
+            
+
+            IF qnUserInput EQUALS "a":
+
+                RETURN 'a'
+
+            ELSEIF qnUserInput EQUALS "b":
+
+                RETURN 'b'
+
+            ELSEIF qnUserInput EQUALS "c":
+
+                RETURN 'c'
+
+            ELSEIF qnUserInput EQUALS "d":
+
+                RETURN 'd'
+
+            ELSEIF qnUserInput EQUALS "N":
+
+                RETURN 'N'
+
+            ELSEIF qnUserInput EQUALS "P":
+
+                RETURN 'P'
+
+            ELSE:
+
+                OUTPUT("Please enter a valid option.")
+
+                SET tOrF TO True
+
+
+
+# another (a|b|c|d) function
+
+DEFINE FUNCTION qnAnsOption():
+
+    SET tOrF TO True
+
+    
+
+    WHILE tOrF EQUALS True:
+
+        # prompt FOR INPUT (a|b|c|d) and RETURN INPUT value. If not valid INPUT, prompt again.
+
+        SET abcd TO INPUT("What is the correct answer (a|b|c|d)?: ")
+
+
+
+        IF abcd EQUALS "a":
+
+            RETURN 'a'
+
+        ELSEIF abcd EQUALS "b":
+
+            RETURN 'b'
+
+        ELSEIF abcd EQUALS "c":
+
+            RETURN 'c'
+
+        ELSEIF abcd EQUALS "d":
+
+            RETURN 'd'
+
+        ELSE:
+
+            OUTPUT("Please enter a valid letter.")
+
+            SET tOrF TO True
+
+
+
+# admin or user function
+
+DEFINE FUNCTION admOrUsr(aOrU):
+
+    # checks IF user INPUT is either an 'a' or 'u' , IF not, prompt FOR a valid INPUT again.
+
+    IF aOrU EQUALS "a":
+
+        RETURN False
+
+    ELSEIF aOrU EQUALS "u":
+
+        RETURN False
+
+    ELSE:
+
+        OUTPUT("Please enter a valid INPUT.")
+
+        RETURN True
+
+        
+
+# another (a|b|c|d) function
+
+DEFINE FUNCTION abcd(abc):
+
+    # prompt FOR INPUT (a|b|c|d) and RETURN INPUT value. If not valid INPUT, prompt again.
+
+    IF abc EQUALS "a":
+
+        RETURN False
+
+    ELSEIF abc EQUALS "b":
+
+        RETURN False
+
+    ELSEIF abc EQUALS "c":
+
+        RETURN False
+
+    ELSEIF abc EQUALS "d":
+
+        exit()
+
+    ELSE:
+
+        OUTPUT("Please enter a valid INPUT.")
+
+        RETURN True
+
+
+
+# check INPUT FOR commas
+
+DEFINE FUNCTION checkComma(userID):
+
+    # check INPUT FOR commas, IF got commas, RETURN True and prompt user to INPUT again
+
+    FOR i IN userID:
+
+        IF i EQUALS ',':
+
+            RETURN True
+
+        ELSE:
+
+            SET tOrF TO True
+
+    IF len(userID) EQUALS 0:
+
+        SET tOrF TO False
+
+        
+
+    IF tOrF:
+
+        RETURN userID
