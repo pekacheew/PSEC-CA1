@@ -1,17 +1,3 @@
-# StudentID:	p2136798
-# Name:	        Gan Hanyong
-# Class:		DISM/FT/1B/02   
-# Assessment:	CA1
-# 
-# Script name:	verifiers.py
-# 
-# Purpose:  	To verify all inputs from Admin.py and User.py
-#
-# Usage syntax:	F5
-# 
-# Python ver:	Python 3.9.7
-#
-
 from rwaFiles import *
 def password_validator(passwd):
       
