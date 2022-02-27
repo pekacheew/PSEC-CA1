@@ -8,9 +8,4 @@ Pseudo Codes: Pseudo Codes of all python files. Admin,User,cipher,verifiers,rwaF
 
 Checklist: User Testing and Validation of program
 
-Post-Implementation Support: 
-You can contact the original creator of this code at
-Email: imasterjokergt@gmail.com
-Mobile Number: +65 96492492
-
 Further Maintenance can be done by yourself or your team. Remember to update all existing documentations after doing so.
