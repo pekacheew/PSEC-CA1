@@ -1,23 +1,3 @@
-# StudentID:	p2136798
-# Name:	        Gan Hanyong
-# Class:		DISM/FT/1B/02   
-# Assessment:	CA1
-# 
-# Script name:	User.py
-# 
-# Purpose:  	For users to register account, to start a quiz attempt, or do reset password.
-#
-# Usage syntax:	F5
-# 
-# Input file: (reading FROM)Specify full path, 'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\userid_pswd.csv'
-#                                              'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\quiz_settings.csv'
-#
-# Output file: (writing to)	Specify full path, 'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\quiz_results.csv'
-#                                              'D:\SP School\Y1 SEM2\PSEC\1B02-GanHanyong\csv\userid_pswd.csv'
-#
-# Python ver:	Python 3.9.7
-#
-
 from rwaFiles import *
 from cipher import *
 from verifiers import *
