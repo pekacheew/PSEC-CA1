@@ -1,16 +1,3 @@
-# StudentID:	  p2136798
-# Name:	        Gan Hanyong
-# Class:		    DISM/FT/1B/02   
-# Assessment:	  CA1
-# 
-# Script name:  colors.py
-# 
-# Purpose:  	  For users to register account, to start a quiz attempt, or do reset password.
-#
-# Usage syntax:	F5
-#
-# Python ver:	Python 3.9.7
-#
 import os
 def styleStr(str_, style=None, rgb=None, rgbSgr=38):
   """returns a string with ANSI Select Graphic Rendition
